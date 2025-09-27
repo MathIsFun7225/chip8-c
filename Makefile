@@ -1,7 +1,18 @@
-default: debug
+default: main
 
-debug:
-	gcc -std=gnu17 -Og -g3 -Wall -Wextra -pedantic -fanalyzer -fsanitize=undefined chip8.c chip8_exec.c main.c -o chip8 `sdl2-config --cflags --libs`
+obj:
+	mkdir -p obj
 
-release:
-	gcc -std=gnu17 -O3 -Wall -Wextra -pedantic chip8.c chip8_exec.c main.c -o chip8 `sdl2-config --cflags --libs`
+obj/%.o: %.c Makefile | obj
+	gcc -lm -std=gnu17 -Og -g3 -Wall -Wextra -Werror -Wno-sign-compare -Wno-unused-parameter -Wno-unused-function -pedantic -pedantic-errors \
+	-fanalyzer -fsanitize=address,undefined $< -c -o $@ `sdl2-config --cflags --libs`
+
+main: obj/main.o obj/chip8.o obj/chip8_audio.o obj/chip8_config.o obj/chip8_display.o obj/chip8_exec.o obj/chip8_run.o obj/chip8_state.o obj/helper.o Makefile | obj
+	gcc -lm -std=gnu17 -Og -g3 -Wall -Wextra -Werror -Wno-sign-compare -Wno-unused-parameter -Wno-unused-function -pedantic -pedantic-errors \
+	-fanalyzer -fsanitize=address,undefined obj/main.o obj/chip8.o obj/chip8_audio.o obj/chip8_config.o obj/chip8_display.o obj/chip8_exec.o \
+	obj/chip8_run.o obj/chip8_state.o obj/helper.o -o $@ `sdl2-config --cflags --libs`
+
+clean:
+	rm -f obj/*.o main
+
+.PHONY: default clean

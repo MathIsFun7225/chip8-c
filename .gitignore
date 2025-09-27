@@ -1,3 +1,4 @@
 .vscode
 
-chip8
+main
+obj/
