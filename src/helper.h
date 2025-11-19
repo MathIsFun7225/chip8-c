@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#define malloc(size) malloc_msg(size, __FILE__, __LINE__, __func__)
-#define calloc(num, size) calloc_msg(num, size, __FILE__, __LINE__, __func__)
-#define realloc(ptr, size) realloc_msg(ptr, size, __FILE__, __LINE__, __func__)
+#define malloc(size) malloc_msg((size), __FILE__, __LINE__, __func__)
+#define calloc(num, size) calloc_msg((num), (size), __FILE__, __LINE__, __func__)
+#define realloc(ptr, size) realloc_msg((ptr), (size), __FILE__, __LINE__, __func__)
 
 void *malloc_msg(ssize_t size, const char *file, int line, const char *func);
 void *calloc_msg(ssize_t num, ssize_t size, const char *file, int line, const char *func);

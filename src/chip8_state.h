@@ -8,49 +8,35 @@
 
 #include "chip8_config.h"
 
-#define DISPLAY_WIDTH 64
-#define DISPLAY_HEIGHT 32
+#define DISPLAY_WIDTH 128
+#define DISPLAY_HEIGHT 64
 
 #define FONT_MEMORY_OFFSET 0
-#define FONT_LENGTH 0x50
+#define LORES_FONT_LENGTH (16 * 5)
+#define HIRES_FONT_LENGTH (16 * 10)
 #define PROGRAM_MEMORY_OFFSET 0x200
 
 struct chip8_state {
     uint8_t memory[4096];
 
     uint8_t screen[DISPLAY_WIDTH * DISPLAY_HEIGHT / 8];
+    bool hires;
 
     uint8_t registers[16];
     uint16_t index_register;
     uint8_t delay_timer;
     uint8_t sound_timer;
     uint16_t pc;
+    uint8_t rpl_flags[16];
 
     bool keys[16];
 
     uint16_t stack_size;
     uint16_t sp;
     uint16_t *stack;
-};
 
-struct chip8_state_compressed {
-    uint8_t *compressed_memory;
-    ssize_t compressed_memory_size;
-
-    uint8_t *compressed_screen;
-    ssize_t compressed_screen_size;
-
-    uint8_t registers[16];
-    uint16_t index_register;
-    uint8_t delay_timer;
-    uint8_t sound_timer;
-    uint16_t pc;
-
-    bool keys[16];
-
-    uint16_t stack_size;
-    uint16_t sp;
-    uint16_t *stack;
+    bool paused;
+    bool stopped;
 };
 
 int chip8_stack_resize(struct chip8_state *state, const struct chip8_config *config, uint16_t new_size);
@@ -58,6 +44,7 @@ int chip8_stack_push(struct chip8_state *state, const struct chip8_config *confi
 int chip8_stack_pop(struct chip8_state *state, const struct chip8_config *config, uint16_t *value);
 
 int chip8_init_state(struct chip8_state *state, const struct chip8_config *config);
+int chip8_reset_state(struct chip8_state *state, const struct chip8_config *config);
 int chip8_close_state(struct chip8_state *state, const struct chip8_config *config);
 
 int chip8_dump_state(FILE *f, const struct chip8_state *state, const struct chip8_config *config);
